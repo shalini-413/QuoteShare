@@ -1,55 +1,56 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { registerUser } from "../services/api";
 
 export default function Register() {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Register form submitted");
-    // TODO: Connect to backend
+    try {
+      const res = await registerUser(formData);
+      setMessage(res.data.message);
+    } catch (err) {
+      setMessage(err.response.data.message || "Registration failed");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold">Register</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        className="w-full border p-2"
-        value={form.name}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        className="w-full border p-2"
-        value={form.email}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        className="w-full border p-2"
-        value={form.password}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit" className="bg-green-600 text-white px-4 py-2">
-        Register
-      </button>
-    </form>
+    <div className="p-4 max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Register</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          name="name"
+          onChange={handleChange}
+          placeholder="Name"
+          className="p-2 border"
+        />
+        <input
+          name="email"
+          onChange={handleChange}
+          placeholder="Email"
+          className="p-2 border"
+        />
+        <input
+          name="password"
+          type="password"
+          onChange={handleChange}
+          placeholder="Password"
+          className="p-2 border"
+        />
+        <button className="bg-blue-600 text-white py-2 rounded">
+          Register
+        </button>
+      </form>
+      <p className="mt-4 text-green-600">{message}</p>
+    </div>
   );
 }
