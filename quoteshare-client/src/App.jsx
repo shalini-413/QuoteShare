@@ -1,18 +1,24 @@
-import { Routes, Route, Link } from "react-router-dom";
-import Login from "./pages/Login";
+import { Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./Components/PrivateRoute";
 
-export default function App() {
+function App() {
   return (
-    <div className="p-8">
-      <nav className="flex gap-4 mb-4">
-        <Link to="/">Login</Link>
-        <Link to="/register">Register</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
 }
+
+export default App;
