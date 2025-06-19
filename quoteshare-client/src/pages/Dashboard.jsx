@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createQuote, getQuotes, likeQuote } from "../services/api";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -75,7 +76,9 @@ export default function Dashboard() {
           </div>
         ))
       )}
-
+      <Link to="/profile" className="text-blue-600 underline mt-4 block">
+        Go to Profile
+      </Link>
       <button
         onClick={logout}
         className="mt-6 bg-red-500 text-white px-4 py-2 rounded"
