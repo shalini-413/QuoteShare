@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createQuote, getQuotes, likeQuote } from "../services/api";
+import {
+  createQuote,
+  getQuotes,
+  likeQuote,
+  deleteQuote,
+} from "../services/api"; // 👈 added deleteQuote
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
@@ -33,9 +38,18 @@ export default function Dashboard() {
   const handleLike = async (id) => {
     try {
       await likeQuote(id);
-      fetchQuotes(); // Refresh the quotes
+      fetchQuotes();
     } catch (err) {
       console.error("Like error:", err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteQuote(id);
+      fetchQuotes();
+    } catch (err) {
+      console.error("Delete error:", err);
     }
   };
 
@@ -67,15 +81,27 @@ export default function Dashboard() {
           <div key={q._id} className="border p-4 mb-3 rounded">
             <p className="text-lg">{q.text}</p>
             <p className="text-sm text-gray-500">— {q.user?.name}</p>
-            <button
-              onClick={() => handleLike(q._id)}
-              className="mt-2 bg-pink-500 text-white px-3 py-1 rounded"
-            >
-              ❤️ {q.likes.length}
-            </button>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => handleLike(q._id)}
+                className="bg-orange-500 text-white px-3 py-1 rounded"
+              >
+                ❤️ {q.likes.length}
+              </button>
+
+              {(q.user === user._id || q.user?._id === user._id) && (
+                <button
+                  onClick={() => handleDelete(q._id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </div>
         ))
       )}
+
       <Link to="/profile" className="text-blue-600 underline mt-4 block">
         Go to Profile
       </Link>

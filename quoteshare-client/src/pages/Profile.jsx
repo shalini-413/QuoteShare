@@ -9,15 +9,23 @@ export default function Profile() {
   const fetchMyQuotes = async () => {
     const res = await getQuotes();
     const userId = JSON.parse(localStorage.getItem("user"))?._id;
-  
+
     const filtered = res.data.filter(
       (q) => q.user === userId || q.user?._id === userId
     );
-  
+
     setMyQuotes(filtered);
   };
-  
-  
+
+  const handleDelete = async (quoteId) => {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      await deleteQuote(quoteId, token);
+      fetchMyQuotes(); // Refresh only user’s quotes
+    } catch (error) {
+      console.error("Error deleting quote:", error);
+    }
+  };
 
   useEffect(() => {
     fetchMyQuotes();
@@ -33,6 +41,12 @@ export default function Profile() {
           <div key={q._id} className="border p-4 mb-3 rounded">
             <p>{q.text}</p>
             <p className="text-sm text-gray-500">❤️ {q.likes.length} Likes</p>
+            <button
+              onClick={() => handleDelete(q._id)}
+              className="mt-2 px-2 py-1 text-red-600 border border-red-600 rounded text-sm"
+            >
+              Delete
+            </button>
           </div>
         ))
       )}
