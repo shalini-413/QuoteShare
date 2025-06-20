@@ -11,8 +11,14 @@ router.post("/", auth, async (req, res) => {
 
 router.get("/", async (req, res) => {
   const quotes = await Quote.find().populate("user", "name");
+
+  quotes.forEach(q => {
+    console.log("Quote:", q.text, "| By:", q.user);
+  });
+
   res.json(quotes);
 });
+
 
 router.patch("/:id/like", auth, async (req, res) => {
   const quote = await Quote.findById(req.params.id);

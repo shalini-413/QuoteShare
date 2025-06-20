@@ -8,9 +8,16 @@ export default function Profile() {
   // Fetch and filter user's own quotes
   const fetchMyQuotes = async () => {
     const res = await getQuotes();
-    const filtered = res.data.filter((q) => q.user._id === user._id);
+    const userId = JSON.parse(localStorage.getItem("user"))?._id;
+  
+    const filtered = res.data.filter(
+      (q) => q.user === userId || q.user?._id === userId
+    );
+  
     setMyQuotes(filtered);
   };
+  
+  
 
   useEffect(() => {
     fetchMyQuotes();
