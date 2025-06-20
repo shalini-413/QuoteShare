@@ -10,3 +10,4 @@ export const loginUser = (data) => API.post("/auth/login", data);
 export const createQuote = (data) => API.post("/quotes", data);
 export const getQuotes = () => API.get("/quotes");
 export const likeQuote = (id) => API.patch(`/quotes/${id}/like`);
+export const deleteQuote = (id) => API.delete(`/quotes/${id}`);
