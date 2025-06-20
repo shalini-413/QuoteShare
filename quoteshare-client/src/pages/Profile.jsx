@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getQuotes } from "../services/api";
+import { getQuotes, deleteQuote } from "../services/api";
 
 export default function Profile() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -17,13 +17,12 @@ export default function Profile() {
     setMyQuotes(filtered);
   };
 
-  const handleDelete = async (quoteId) => {
+  const handleDelete = async (id) => {
     try {
-      const token = JSON.parse(localStorage.getItem("token"));
-      await deleteQuote(quoteId, token);
-      fetchMyQuotes(); // Refresh only user’s quotes
-    } catch (error) {
-      console.error("Error deleting quote:", error);
+      await deleteQuote(id); // Axios interceptor adds token
+      fetchMyQuotes();       // Refresh after delete
+    } catch (err) {
+      console.error("Error deleting quote:", err.response?.data || err.message);
     }
   };
 
@@ -38,15 +37,18 @@ export default function Profile() {
         <p>You haven't posted any quotes yet.</p>
       ) : (
         myQuotes.map((q) => (
-          <div key={q._id} className="border p-4 mb-3 rounded">
-            <p>{q.text}</p>
+          <div key={q._id} className="border p-4 mb-3 rounded shadow">
+            <p className="text-lg">{q.text}</p>
             <p className="text-sm text-gray-500">❤️ {q.likes.length} Likes</p>
-            <button
-              onClick={() => handleDelete(q._id)}
-              className="mt-2 px-2 py-1 text-red-600 border border-red-600 rounded text-sm"
-            >
-              Delete
-            </button>
+        
+            {q.user === user._id || q.user?._id === user._id ? (
+              <button
+                onClick={() => handleDelete(q._id)}
+                className="mt-2 px-2 py-1 text-red-600 border border-red-600 rounded text-sm"
+              >
+                Delete
+              </button>
+            ) : null}
           </div>
         ))
       )}

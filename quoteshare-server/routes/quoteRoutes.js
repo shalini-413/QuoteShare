@@ -37,4 +37,22 @@ router.patch("/:id/like", auth, async (req, res) => {
   res.json({ likes: quote.likes.length });
 });
 
+// ✅ DELETE: Delete a quote (only by owner)
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const quote = await Quote.findById(req.params.id);
+    if (!quote) return res.status(404).json({ message: "Quote not found" });
+
+    if (quote.user.toString() !== req.userId) {
+      return res.status(403).json({ message: "You are not allowed to delete this quote" });
+    }
+
+    await quote.deleteOne();
+    res.json({ message: "Quote deleted successfully" });
+  } catch (err) {
+    console.error("Delete error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
